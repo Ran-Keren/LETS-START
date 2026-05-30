@@ -8,12 +8,8 @@
         body { 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             height: 100vh; margin: 0; background-color: #121212; color: white; font-family: sans-serif;
-            /* Completely lock the page against scrolling and bouncing */
-            overscroll-behavior: none; 
-            overflow: hidden; 
-            touch-action: none; 
-            -webkit-user-select: none; 
-            user-select: none;
+            overscroll-behavior: none; overflow: hidden; touch-action: none; 
+            -webkit-user-select: none; user-select: none;
         }
         #gameBtn { 
             padding: 40px 80px; font-size: 24px; background-color: grey; 
@@ -40,7 +36,7 @@
             storageBucket: "lets-start-123.firebasestorage.app",
             messagingSenderId: "550987287652",
             appId: "1:550987287652:web:7d47f290c5215f4fc02371",
-            databaseURL: "https://lets-start-123-default-rtdb.firebaseio.com"
+            databaseURL: "https://lets-start-123-default-rtdb.europe-west1.firebasedatabase.app/"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -49,24 +45,20 @@
         const display = document.getElementById('display');
         const myId = 'player' + Math.floor(Math.random() * 1000000);
 
-        // Turn red and update DB when held down
         btn.addEventListener('touchstart', (e) => { 
             e.preventDefault();
             btn.style.backgroundColor = 'red'; 
             set(ref(db, 'game/' + myId), true);
         });
 
-        // Turn back to grey and update DB when released
         btn.addEventListener('touchend', (e) => { 
             e.preventDefault();
             btn.style.backgroundColor = 'grey'; 
             set(ref(db, 'game/' + myId), false);
         });
 
-        // Synchronize state across all devices
         onValue(ref(db, 'game'), (snapshot) => {
             const data = snapshot.val() || {};
-            // Count how many players are currently holding the button
             const activePlayers = Object.values(data).filter(status => status === true);
             
             if (activePlayers.length >= 2) {
@@ -74,7 +66,6 @@
                 btn.style.display = 'none';
                 display.style.display = 'block';
                 
-                // Final 5-second countdown to redirect
                 setTimeout(() => {
                     window.location.href = "https://questify-3c0d7.web.app/";
                 }, 5000);
