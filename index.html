@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Start</title>
+    <style>
+        body { 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            height: 100vh; margin: 0; transition: background 0.3s; font-family: sans-serif; 
+        }
+        #gameBtn { 
+            padding: 40px 80px; font-size: 24px; background-color: grey; 
+            border: none; cursor: pointer; color: white; border-radius: 10px; 
+        }
+        #display { font-size: 100px; font-weight: bold; display: none; }
+    </style>
+</head>
+<body>
+
+    <button id="gameBtn">Start the Game</button>
+    <div id="display">1:38</div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-database.js";
+
+        // Your specific config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCxABjgEt76G2GOOvEoqSRWAix-4vifpkA",
+            authDomain: "lets-start-123.firebaseapp.com",
+            projectId: "lets-start-123",
+            storageBucket: "lets-start-123.firebasestorage.app",
+            messagingSenderId: "550987287652",
+            appId: "1:550987287652:web:7d47f290c5215f4fc02371",
+            databaseURL: "https://lets-start-123-default-rtdb.firebaseio.com"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const btn = document.getElementById('gameBtn');
+        const display = document.getElementById('display');
+        const myId = 'player' + Math.floor(Math.random() * 1000000);
+
+        // Handle Button Click
+        btn.onclick = () => {
+            set(ref(db, 'game/' + myId), true);
+            btn.style.backgroundColor = 'red';
+        };
+
+        // Real-time synchronization
+        onValue(ref(db, 'game'), (snapshot) => {
+            const data = snapshot.val() || {};
+            const playerKeys = Object.keys(data);
+            
+            if (playerKeys.length >= 2) {
+                document.body.style.backgroundColor = 'green';
+                btn.style.display = 'none';
+                display.style.display = 'block';
+                
+                // Redirect after 5 seconds
+                setTimeout(() => {
+                    window.location.href = "https://questify-3c0d7.web.app/";
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html>
